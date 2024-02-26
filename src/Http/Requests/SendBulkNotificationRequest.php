@@ -27,7 +27,7 @@ use Illuminate\Validation\Rule;
  *              @OA\Property(property="title", type="string"),
  *              @OA\Property(property="body", type="string"),
  *              @OA\Property(property="image_url", type="string"),
- *              @OA\Property(property="redirect_url", type="string")
+ *              @OA\Property(property="redirect_url", type="string"),
  *              @OA\Property(property="data", type="object")
  *          )
  *      ),
