@@ -3,6 +3,14 @@
 namespace EscolaLms\BulkNotifications;
 
 use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
+use EscolaLms\BulkNotifications\Repositories\BulkNotificationRepository;
+use EscolaLms\BulkNotifications\Repositories\Contracts\BulkNotificationRepositoryContract;
+use EscolaLms\BulkNotifications\Repositories\DeviceTokenRepository;
+use EscolaLms\BulkNotifications\Repositories\Contracts\DeviceTokenRepositoryContract;
+use EscolaLms\BulkNotifications\Services\BulkNotificationService;
+use EscolaLms\BulkNotifications\Services\Contracts\BulkNotificationServiceContract;
+use EscolaLms\BulkNotifications\Services\Contracts\DeviceTokenServiceContract;
+use EscolaLms\BulkNotifications\Services\DeviceTokenService;
 use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
 use Illuminate\Support\ServiceProvider;
 
@@ -13,13 +21,19 @@ class EscolaLmsBulkNotificationsServiceProvider extends ServiceProvider
 {
     const CONFIG_KEY = 'escolalms_bulk_notifications';
 
-    public const REPOSITORIES = [];
+    public const REPOSITORIES = [
+        DeviceTokenRepositoryContract::class => DeviceTokenRepository::class,
+        BulkNotificationRepositoryContract::class => BulkNotificationRepository::class,
+    ];
 
-    public const SERVICES = [];
+    public const SERVICES = [
+        DeviceTokenServiceContract::class => DeviceTokenService::class,
+        BulkNotificationServiceContract::class => BulkNotificationService::class,
+    ];
 
     public $singletons = self::SERVICES + self::REPOSITORIES;
 
-    public function register()
+    public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/config.php', self::CONFIG_KEY);
 
@@ -27,7 +41,7 @@ class EscolaLmsBulkNotificationsServiceProvider extends ServiceProvider
         $this->app->register(EscolaLmsAuthServiceProvider::class);
     }
 
-    public function boot()
+    public function boot(): void
     {
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
 
@@ -36,7 +50,7 @@ class EscolaLmsBulkNotificationsServiceProvider extends ServiceProvider
         }
     }
 
-    public function bootForConsole()
+    public function bootForConsole(): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
