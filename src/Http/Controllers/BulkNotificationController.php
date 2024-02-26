@@ -12,7 +12,7 @@ use Illuminate\Http\JsonResponse;
 class BulkNotificationController extends EscolaLmsBaseController implements BulkNotificationControllerSwagger
 {
 
-    public function __construct(private readonly BulkNotificationServiceContract $bulkNotificationService)
+    public function __construct(private BulkNotificationServiceContract $bulkNotificationService)
     {
     }
 

@@ -10,7 +10,7 @@ interface BulkNotificationControllerSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/notifications/send",
+     *      path="/api/admin/bulk-notifications/send",
      *      summary="Store a newly notification",
      *      tags={"Admin Bulk Notifications"},
      *      description="Store Bulk Notification",

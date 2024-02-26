@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
 
 class DeviceTokenController extends EscolaLmsBaseController implements DeviceTokenControllerSwagger
 {
-    public function __construct(private readonly DeviceTokenServiceContract $deviceTokenService)
+    public function __construct(private DeviceTokenServiceContract $deviceTokenService)
     {
     }
 

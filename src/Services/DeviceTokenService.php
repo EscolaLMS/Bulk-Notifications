@@ -10,7 +10,7 @@ use EscolaLms\BulkNotifications\Services\Contracts\DeviceTokenServiceContract;
 class DeviceTokenService implements DeviceTokenServiceContract
 {
 
-    public function __construct(private readonly DeviceTokenRepositoryContract $deviceTokenRepository)
+    public function __construct(private DeviceTokenRepositoryContract $deviceTokenRepository)
     {
     }
 

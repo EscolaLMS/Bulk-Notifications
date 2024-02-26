@@ -11,7 +11,7 @@ Route::prefix('api')
             Route::post('/', [DeviceTokenController::class, 'create']);
         });
 
-        Route::prefix('admin/notifications')->group(function () {
+        Route::prefix('admin/bulk-notifications')->group(function () {
             Route::post('send', [BulkNotificationController::class, 'send']);
         });
     });

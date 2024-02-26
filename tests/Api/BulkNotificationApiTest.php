@@ -31,7 +31,7 @@ class BulkNotificationApiTest extends TestCase
         $payload = $this->makeBulkNotificationPayload($channel);
 
         $response = $this->actingAs($user, 'api')
-            ->postJson('api/admin/notifications/send', $payload)
+            ->postJson('api/admin/bulk-notifications/send', $payload)
             ->assertCreated();
 
         $bulkNotificationId = $response->json('data.id');
@@ -46,12 +46,12 @@ class BulkNotificationApiTest extends TestCase
     public function testSendBulkNotificationInvalidChannel(): void
     {
         $this->actingAs($this->makeAdmin(), 'api')
-            ->postJson('api/admin/notifications/send', $this->makeBulkNotificationPayload(null))
+            ->postJson('api/admin/bulk-notifications/send', $this->makeBulkNotificationPayload(null))
             ->assertUnprocessable()
             ->assertJsonValidationErrors('channel');
 
         $this->actingAs($this->makeAdmin(), 'api')
-            ->postJson('api/admin/notifications/send', $this->makeBulkNotificationPayload(''))
+            ->postJson('api/admin/bulk-notifications/send', $this->makeBulkNotificationPayload(''))
             ->assertUnprocessable()
             ->assertJsonValidationErrors('channel');
     }
@@ -62,7 +62,7 @@ class BulkNotificationApiTest extends TestCase
     public function testSendBulkNotificationInvalidSections(string $channel, array $data, array $errors): void
     {
         $this->actingAs($this->makeAdmin(), 'api')
-            ->postJson('api/admin/notifications/send', $this->makeBulkNotificationPayload($channel, $data))
+            ->postJson('api/admin/bulk-notifications/send', $this->makeBulkNotificationPayload($channel, $data))
             ->assertUnprocessable()
             ->assertJsonValidationErrors($errors);
     }
@@ -73,7 +73,7 @@ class BulkNotificationApiTest extends TestCase
     public function testSendBulkNotificationForbidden(string $channel): void
     {
         $this->actingAs($this->makeStudent(), 'api')
-            ->postJson('api/admin/notifications/send', $this->makeBulkNotificationPayload($channel))
+            ->postJson('api/admin/bulk-notifications/send', $this->makeBulkNotificationPayload($channel))
             ->assertForbidden();
     }
 
@@ -82,7 +82,7 @@ class BulkNotificationApiTest extends TestCase
      */
     public function testSendBulkNotificationUnauthorized(string $channel): void
     {
-        $this->postJson('api/admin/notifications/send', $this->makeBulkNotificationPayload($channel))
+        $this->postJson('api/admin/bulk-notifications/send', $this->makeBulkNotificationPayload($channel))
             ->assertUnauthorized();
     }
 

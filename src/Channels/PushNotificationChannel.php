@@ -14,7 +14,7 @@ use Kreait\Firebase\Messaging\CloudMessage;
 class PushNotificationChannel implements NotificationChannel
 {
     public function __construct(
-        private readonly Messaging $messaging
+        private Messaging $messaging
     )
     {
     }

@@ -21,7 +21,7 @@ class BulkNotificationService implements BulkNotificationServiceContract
 {
 
     public function __construct(
-        private readonly BulkNotificationRepositoryContract $bulkNotificationRepository,
+        private BulkNotificationRepositoryContract $bulkNotificationRepository,
         private DeviceTokenRepositoryContract $deviceTokenRepository
     )
     {
