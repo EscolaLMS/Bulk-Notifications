@@ -4,6 +4,8 @@ namespace EscolaLms\BulkNotifications\Services;
 
 use EscolaLms\BulkNotifications\Channels\NotificationChannel;
 use EscolaLms\BulkNotifications\Channels\PushNotificationChannel;
+use EscolaLms\BulkNotifications\Dtos\OrderDto;
+use EscolaLms\BulkNotifications\Dtos\PageDto;
 use EscolaLms\BulkNotifications\Dtos\SendBulkNotificationDto;
 use EscolaLms\BulkNotifications\Exceptions\UnsupportedNotification;
 use EscolaLms\BulkNotifications\Jobs\SendNotification;
@@ -14,6 +16,8 @@ use EscolaLms\BulkNotifications\Repositories\Contracts\BulkNotificationRepositor
 use EscolaLms\BulkNotifications\Repositories\Contracts\DeviceTokenRepositoryContract;
 use EscolaLms\BulkNotifications\Services\Contracts\BulkNotificationServiceContract;
 use EscolaLms\BulkNotifications\ValueObjects\PushNotification;
+use EscolaLms\BulkNotifications\Dtos\CriteriaBulkNotificationDto;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -39,6 +43,16 @@ class BulkNotificationService implements BulkNotificationServiceContract
 
             return $bulkNotification;
         });
+    }
+
+    public function list(CriteriaBulkNotificationDto $criteriaDto, PageDto $pageDto, OrderDto $orderDto): LengthAwarePaginator
+    {
+        return $this->bulkNotificationRepository->findAll(
+            $criteriaDto->toArray(),
+            $pageDto->getPerPage(),
+            $orderDto->getOrderDirection(),
+            $orderDto->getOrderBy()
+        );
     }
 
     private function createBulkNotification(SendBulkNotificationDto $dto, Collection $channelSections): BulkNotification

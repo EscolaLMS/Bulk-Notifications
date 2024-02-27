@@ -10,7 +10,7 @@ use EscolaLms\BulkNotifications\Tests\TestCase;
 use EscolaLms\Core\Tests\CreatesUsers;
 use Illuminate\Support\Facades\Queue;
 
-class BulkNotificationApiTest extends TestCase
+class SendBulkNotificationApiTest extends TestCase
 {
     use CreatesUsers, BulkNotificationTesting;
 

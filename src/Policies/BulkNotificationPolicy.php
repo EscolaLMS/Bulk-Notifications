@@ -14,4 +14,9 @@ class BulkNotificationPolicy
     {
         return $user->can(BulkNotificationPermissionEnum::CREATE_BULK_NOTIFICATION);
     }
+
+    public function list(User $user): bool
+    {
+        return $user->can(BulkNotificationPermissionEnum::LIST_BULK_NOTIFICATION);
+    }
 }
