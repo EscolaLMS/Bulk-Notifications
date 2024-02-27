@@ -3,6 +3,7 @@
 namespace EscolaLms\BulkNotifications;
 
 use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
+use EscolaLms\BulkNotifications\Providers\SettingsServiceProvider;
 use EscolaLms\BulkNotifications\Repositories\BulkNotificationRepository;
 use EscolaLms\BulkNotifications\Repositories\Contracts\BulkNotificationRepositoryContract;
 use EscolaLms\BulkNotifications\Repositories\DeviceTokenRepository;
@@ -37,6 +38,7 @@ class EscolaLmsBulkNotificationsServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/config.php', self::CONFIG_KEY);
 
+        $this->app->register(SettingsServiceProvider::class);
         $this->app->register(EscolaLmsSettingsServiceProvider::class);
         $this->app->register(EscolaLmsAuthServiceProvider::class);
     }
