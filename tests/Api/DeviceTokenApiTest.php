@@ -98,8 +98,7 @@ class DeviceTokenApiTest extends TestCase
 
     public function testCreateDeviceTokenForbidden(): void
     {
-        $user = $this->makeStudent();
-        $user->roles()->detach();
+        $user = config('auth.providers.users.model')::factory()->create();
 
         $this->actingAs($user, 'api')
             ->postJson('api/notifications/tokens', ['token' => $this->faker->uuid])
