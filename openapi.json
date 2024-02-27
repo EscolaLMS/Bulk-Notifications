@@ -53,6 +53,59 @@
                 ]
             }
         },
+        "/api/bulk-notifications": {
+            "get": {
+                "tags": [
+                    "Admin Bulk Notifications"
+                ],
+                "summary": "Get a listing of the bulk notifications",
+                "description": "Get all Bulk Notifications",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Pagination Page Number",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Pagination Per Page",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "default": 15
+                        }
+                    },
+                    {
+                        "name": "channel",
+                        "in": "query",
+                        "description": "Bulk notification channel [EscolaLms\\BulkNotifications\\Channels\\PushNotificationChannel]",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
         "/api/notifications/tokens": {
             "post": {
                 "tags": [
