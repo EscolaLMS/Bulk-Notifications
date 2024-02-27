@@ -33,4 +33,3 @@ class BulkNotificationUser extends Pivot
         return $this->belongsTo(User::class);
     }
 }
-

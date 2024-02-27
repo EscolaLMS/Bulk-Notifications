@@ -2,6 +2,8 @@
 
 namespace EscolaLms\BulkNotifications\Models;
 
+use EscolaLms\BulkNotifications\Database\Factories\BulkNotificationSectionFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
@@ -20,6 +22,11 @@ use Illuminate\Support\Carbon;
  */
 class BulkNotificationSection extends Model
 {
+    use HasFactory;
     protected $guarded = ['id'];
-}
 
+    protected static function newFactory(): BulkNotificationSectionFactory
+    {
+        return BulkNotificationSectionFactory::new();
+    }
+}
