@@ -4,7 +4,7 @@ namespace EscolaLms\BulkNotifications\Tests;
 
 use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
 use EscolaLms\Auth\Models\User;
-use EscolaLms\Bookmarks\EscolaLmsBookmarksServiceProvider;
+use EscolaLms\BulkNotifications\EscolaLmsBulkNotificationsServiceProvider;
 use EscolaLms\Core\Tests\TestCase as CoreTestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Passport\PassportServiceProvider;
@@ -21,7 +21,7 @@ class TestCase extends CoreTestCase
             PassportServiceProvider::class,
             PermissionServiceProvider::class,
             EscolaLmsAuthServiceProvider::class,
-            EscolaLmsBookmarksServiceProvider::class
+            EscolaLmsBulkNotificationsServiceProvider::class
         ];
     }
 
