@@ -4,7 +4,8 @@ namespace EscolaLms\BulkNotifications\Http\Controllers;
 
 use EscolaLms\BulkNotifications\Http\Controllers\Swagger\BulkNotificationControllerSwagger;
 use EscolaLms\BulkNotifications\Http\Requests\ListBulkNotificationRequest;
-use EscolaLms\BulkNotifications\Http\Requests\SendBulkNotificationRequest;
+use EscolaLms\BulkNotifications\Http\Requests\SendUserBulkNotificationRequest;
+use EscolaLms\BulkNotifications\Http\Requests\SendMulticastBulkNotificationRequest;
 use EscolaLms\BulkNotifications\Http\Resources\BulkNotificationResource;
 use EscolaLms\BulkNotifications\Services\Contracts\BulkNotificationServiceContract;
 use EscolaLms\Core\Http\Controllers\EscolaLmsBaseController;
@@ -17,9 +18,19 @@ class BulkNotificationController extends EscolaLmsBaseController implements Bulk
     {
     }
 
-    public function send(SendBulkNotificationRequest $request): JsonResponse
+    public function send(SendUserBulkNotificationRequest $request): JsonResponse
     {
         $bulkNotification = $this->bulkNotificationService->send($request->toDto());
+
+        return $this->sendResponseForResource(
+            BulkNotificationResource::make($bulkNotification),
+            'Notification sent successfully.'
+        );
+    }
+
+    public function sendMulticast(SendMulticastBulkNotificationRequest $request): JsonResponse
+    {
+        $bulkNotification = $this->bulkNotificationService->sendMulticast($request->toDto());
 
         return $this->sendResponseForResource(
             BulkNotificationResource::make($bulkNotification),

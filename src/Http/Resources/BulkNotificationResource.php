@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @OA\Schema(
  *      schema="BulkNotificationResource",
- *      required={"id", "channel", "sections"},
+ *      required={"id", "channel", "sections", "users"},
  *      @OA\Property(
  *          property="id",
  *          description="id",
@@ -24,6 +24,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *           type="array",
  *           @OA\Items(ref="#/components/schemas/BulkNotificationSectionResource")
  *       ),
+ *       @OA\Property(
+ *           property="users",
+ *           description="users",
+ *           type="array",
+ *           @OA\Items(
+ *               type="integer"
+ *            )
+ *       ),
  * )
  *
  */
@@ -34,7 +42,8 @@ class BulkNotificationResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'channel' => $this->resource->channel,
-            'sections' => BulkNotificationSectionResource::collection($this->resource->sections)
+            'sections' => BulkNotificationSectionResource::collection($this->resource->sections),
+            'users' => $this->resource->users->pluck('id')
         ];
     }
 }

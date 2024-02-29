@@ -10,5 +10,7 @@ interface DeviceTokenRepositoryContract extends BaseRepositoryContract
 {
     public function findToken(string $token): ?DeviceToken;
 
+    public function findTokens(): Collection;
+
     public function findUsersTokens(Collection $userIds): Collection;
 }
