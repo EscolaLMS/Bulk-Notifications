@@ -4,6 +4,7 @@ namespace EscolaLms\BulkNotifications\Tests;
 
 use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
 use EscolaLms\Auth\Models\User;
+use EscolaLms\BulkNotifications\Channels\PushNotificationChannel;
 use EscolaLms\BulkNotifications\EscolaLmsBulkNotificationsServiceProvider;
 use EscolaLms\Core\Tests\TestCase as CoreTestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -29,5 +30,12 @@ class TestCase extends CoreTestCase
     {
         $app['config']->set('auth.providers.users.model', User::class);
         $app['config']->set('passport.client_uuids', true);
+    }
+
+    protected function channelDataProvider(): array
+    {
+        return [
+            ['channel' => PushNotificationChannel::class,]
+        ];
     }
 }

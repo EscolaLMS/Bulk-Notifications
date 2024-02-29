@@ -38,7 +38,8 @@ class ListBulkNotificationApiTest extends TestCase
                         'id',
                         'key',
                         'value',
-                    ]]
+                    ]],
+                    'users',
                 ]]
             ]);
     }
@@ -62,7 +63,8 @@ class ListBulkNotificationApiTest extends TestCase
                         'id',
                         'key',
                         'value',
-                    ]]
+                    ]],
+                    'users',
                 ]]
             ]);
 
@@ -78,7 +80,8 @@ class ListBulkNotificationApiTest extends TestCase
                         'id',
                         'key',
                         'value',
-                    ]]
+                    ]],
+                    'users',
                 ]]
             ]);
     }
@@ -110,7 +113,8 @@ class ListBulkNotificationApiTest extends TestCase
                         'id',
                         'key',
                         'value',
-                    ]]
+                    ]],
+                    'users',
                 ]]
             ]);
 
@@ -126,7 +130,8 @@ class ListBulkNotificationApiTest extends TestCase
                         'id',
                         'key',
                         'value',
-                    ]]
+                    ]],
+                    'users',
                 ]]
             ]);
     }

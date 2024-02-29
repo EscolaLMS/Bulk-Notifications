@@ -9,7 +9,6 @@ use Illuminate\Foundation\Testing\WithFaker;
 
 class DeviceTokenApiTest extends TestCase
 {
-
     use CreatesUsers, WithFaker;
 
     protected function setUp(): void

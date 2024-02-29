@@ -3,7 +3,8 @@
 namespace EscolaLms\BulkNotifications\Http\Requests;
 
 use EscolaLms\BulkNotifications\Channels\PushNotificationChannel;
-use EscolaLms\BulkNotifications\Dtos\SendBulkNotificationDto;
+use EscolaLms\BulkNotifications\Dtos\SendUserBulkNotificationDto;
+use EscolaLms\BulkNotifications\Dtos\SendMulticastBulkNotificationDto;
 use EscolaLms\BulkNotifications\Models\BulkNotification;
 use EscolaLms\BulkNotifications\Rules\RequiredSection;
 use Illuminate\Foundation\Http\FormRequest;
@@ -12,7 +13,7 @@ use Illuminate\Validation\Rule;
 
 /**
  * @OA\Schema(
- *      schema="SendBulkNotificationRequest",
+ *      schema="SendMulticastBulkNotificationRequest",
  *      required={"channel", "sections", "user_ids"},
  *      @OA\Property(
  *          property="channel",
@@ -31,18 +32,10 @@ use Illuminate\Validation\Rule;
  *              @OA\Property(property="data", type="object")
  *          )
  *      ),
- *      @OA\Property(
- *          property="user_ids",
- *          description="user_ids",
- *          type="array",
- *          @OA\Items(
- *              type="integer"
- *           )
- *      ),
  * )
  *
  */
-class SendBulkNotificationRequest extends FormRequest
+class SendMulticastBulkNotificationRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -55,13 +48,11 @@ class SendBulkNotificationRequest extends FormRequest
             'channel' => ['required', Rule::in(PushNotificationChannel::class)],
             'sections' => ['required', new RequiredSection()],
             'sections.*' => ['required'],
-            'user_ids' => ['array', 'required'],
-            'user_ids.*' => ['exists:users,id'],
         ];
     }
 
-    public function toDto(): SendBulkNotificationDto
+    public function toDto(): SendMulticastBulkNotificationDto
     {
-        return SendBulkNotificationDto::instantiateFromRequest($this);
+        return SendMulticastBulkNotificationDto::instantiateFromRequest($this);
     }
 }

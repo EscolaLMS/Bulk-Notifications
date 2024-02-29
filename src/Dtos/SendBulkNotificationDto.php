@@ -13,13 +13,10 @@ class SendBulkNotificationDto implements DtoContract, InstantiateFromRequest
 
     private Collection $sections;
 
-    private Collection $userIds;
-
-    public function __construct(string $channel, array $sections, array $userIds)
+    public function __construct(string $channel, array $sections)
     {
         $this->channel = $channel;
         $this->sections = collect($sections);
-        $this->userIds = collect($userIds);
     }
 
     public function getChannel(): string
@@ -32,17 +29,11 @@ class SendBulkNotificationDto implements DtoContract, InstantiateFromRequest
         return $this->sections;
     }
 
-    public function getUserIds(): Collection
-    {
-        return $this->userIds;
-    }
-
     public function toArray(): array
     {
         return [
             'channel' => $this->getChannel(),
             'sections' => $this->getSections(),
-            'user_ids' => $this->getUserIds(),
         ];
     }
 
@@ -51,7 +42,6 @@ class SendBulkNotificationDto implements DtoContract, InstantiateFromRequest
         return new static(
             $request->input('channel'),
             $request->input('sections'),
-            $request->input('user_ids'),
         );
     }
 }

@@ -3,7 +3,8 @@
 namespace EscolaLms\BulkNotifications\Http\Controllers\Swagger;
 
 use EscolaLms\BulkNotifications\Http\Requests\ListBulkNotificationRequest;
-use EscolaLms\BulkNotifications\Http\Requests\SendBulkNotificationRequest;
+use EscolaLms\BulkNotifications\Http\Requests\SendUserBulkNotificationRequest;
+use EscolaLms\BulkNotifications\Http\Requests\SendMulticastBulkNotificationRequest;
 use Illuminate\Http\JsonResponse;
 
 interface BulkNotificationControllerSwagger
@@ -22,7 +23,7 @@ interface BulkNotificationControllerSwagger
      *          required=true,
      *          @OA\MediaType(
      *              mediaType="application/json",
-     *              @OA\Schema(ref="#/components/schemas/SendBulkNotificationRequest")
+     *              @OA\Schema(ref="#/components/schemas/SendUserBulkNotificationRequest")
      *          ),
      *      ),
      *      @OA\Response(
@@ -49,11 +50,54 @@ interface BulkNotificationControllerSwagger
      *      )
      * )
      */
-    public function send(SendBulkNotificationRequest $request): JsonResponse;
+    public function send(SendUserBulkNotificationRequest $request): JsonResponse;
+
+    /**
+     * @OA\Post(
+     *      path="/api/admin/bulk-notifications/send/multicast",
+     *      summary="Store a newly notification",
+     *      tags={"Admin Bulk Notifications"},
+     *      description="Store Bulk Notification",
+     *      security={
+     *          {"passport": {}},
+     *      },
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *              @OA\Schema(ref="#/components/schemas/SendMulticastBulkNotificationRequest")
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=201,
+     *          description="Successfull operation",
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *              @OA\Schema(
+     *                  type="object",
+     *                  @OA\Property(
+     *                      property="success",
+     *                      type="boolean"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="data",
+     *                      ref="#/components/schemas/BulkNotificationResource"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="message",
+     *                      type="string"
+     *                  )
+     *              )
+     *          )
+     *      )
+     * )
+     */
+    public function sendMulticast(SendMulticastBulkNotificationRequest $request): JsonResponse;
+
 
     /**
      * @OA\Get(
-     *      path="/api/bulk-notifications",
+     *      path="/api/admin/bulk-notifications",
      *      summary="Get a listing of the bulk notifications",
      *      tags={"Admin Bulk Notifications"},
      *      description="Get all Bulk Notifications",

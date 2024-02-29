@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @OA\Schema(
  *      schema="BulkNotificationResource",
- *      required={"id", "channel", "sections"},
+ *      required={"id", "channel", "sections", "users},
  *      @OA\Property(
  *          property="id",
  *          description="id",
@@ -34,7 +34,8 @@ class BulkNotificationResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'channel' => $this->resource->channel,
-            'sections' => BulkNotificationSectionResource::collection($this->resource->sections)
+            'sections' => BulkNotificationSectionResource::collection($this->resource->sections),
+            'users' => $this->resource->users->pluck('id')
         ];
     }
 }

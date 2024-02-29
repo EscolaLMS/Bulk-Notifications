@@ -7,6 +7,8 @@ use EscolaLms\BulkNotifications\Channels\PushNotificationChannel;
 use EscolaLms\BulkNotifications\Dtos\OrderDto;
 use EscolaLms\BulkNotifications\Dtos\PageDto;
 use EscolaLms\BulkNotifications\Dtos\SendBulkNotificationDto;
+use EscolaLms\BulkNotifications\Dtos\SendUserBulkNotificationDto;
+use EscolaLms\BulkNotifications\Dtos\SendMulticastBulkNotificationDto;
 use EscolaLms\BulkNotifications\Exceptions\UnsupportedNotification;
 use EscolaLms\BulkNotifications\Jobs\SendNotification;
 use EscolaLms\BulkNotifications\Models\BulkNotification;
@@ -31,7 +33,7 @@ class BulkNotificationService implements BulkNotificationServiceContract
     {
     }
 
-    public function send(SendBulkNotificationDto $dto): BulkNotification
+    public function send(SendUserBulkNotificationDto $dto): BulkNotification
     {
         return DB::transaction(function () use ($dto) {
             /** @var NotificationChannel $channel */
@@ -39,7 +41,29 @@ class BulkNotificationService implements BulkNotificationServiceContract
 
             $bulkNotification = $this->createBulkNotification($dto, $channel::sections());
 
-            $this->process($bulkNotification);
+            $recipients = $this->recipients($bulkNotification, $dto->getUserIds());
+
+            $bulkNotification->users()->attach($recipients->pluck('user_id'));
+
+            $this->process($bulkNotification, $recipients);
+
+            return $bulkNotification;
+        });
+    }
+
+    public function sendMulticast(SendMulticastBulkNotificationDto $dto): BulkNotification
+    {
+        return DB::transaction(function () use ($dto) {
+            /** @var NotificationChannel $channel */
+            $channel = $dto->getChannel();
+
+            $bulkNotification = $this->createBulkNotification($dto, $channel::sections());
+
+            $recipients = $this->recipients($bulkNotification);
+
+            $bulkNotification->users()->attach($recipients->pluck('user_id'));
+
+            $this->process($bulkNotification, $recipients);
 
             return $bulkNotification;
         });
@@ -53,6 +77,43 @@ class BulkNotificationService implements BulkNotificationServiceContract
             $orderDto->getOrderDirection(),
             $orderDto->getOrderBy()
         );
+    }
+
+    private function recipients(BulkNotification $bulkNotification, ?Collection $userIds = null): Collection
+    {
+        return match ($bulkNotification->channel) {
+            PushNotificationChannel::class => $userIds ? $this->deviceTokenRepository->findUsersTokens($userIds) : $this->deviceTokenRepository->findTokens(),
+            default => throw new UnsupportedNotification()
+        };
+    }
+
+    /**
+     * @throws UnsupportedNotification
+     */
+    private function process(BulkNotification $bulkNotification, Collection $recipients): void
+    {
+        match ($bulkNotification->channel) {
+            PushNotificationChannel::class => $this->processPushNotifications($bulkNotification, $recipients),
+            default => throw new UnsupportedNotification()
+        };
+    }
+
+    private function processPushNotifications(BulkNotification $bulkNotification, Collection $recipients): void
+    {
+        $channel = $bulkNotification->channel;
+        $users = $bulkNotification->users;
+        $sections = $bulkNotification->sections;
+
+        $recipients
+            ->each(function (DeviceToken $deviceToken) use ($channel, $users, $sections, $recipients) {
+                $notification = PushNotification::of(
+                    $users->filter(fn(User $user) => $user->getKey() === $deviceToken->user->getKey())->first()?->pivot,
+                    $sections,
+                    $deviceToken->token
+                );
+
+                SendNotification::dispatch($notification, $channel);
+            });
     }
 
     private function createBulkNotification(SendBulkNotificationDto $dto, Collection $channelSections): BulkNotification
@@ -69,37 +130,6 @@ class BulkNotificationService implements BulkNotificationServiceContract
             $bulkNotification->sections()->create(['key' => $key, 'value' => $value]);
         }
 
-        $bulkNotification->users()->attach($dto->getUserIds());
-
         return $bulkNotification;
-    }
-
-    /**
-     * @throws UnsupportedNotification
-     */
-    private function process(BulkNotification $bulkNotification): void
-    {
-        match ($bulkNotification->channel) {
-            PushNotificationChannel::class => $this->processPushNotifications($bulkNotification),
-            default => throw new UnsupportedNotification()
-        };
-    }
-
-    private function processPushNotifications(BulkNotification $bulkNotification): void
-    {
-        $sections = $bulkNotification->sections;
-        $users = $bulkNotification->users;
-
-        $this->deviceTokenRepository
-            ->findUsersTokens($users->pluck('id'))
-            ->each(function (DeviceToken $deviceToken) use ($bulkNotification, $users, $sections) {
-                $notification = PushNotification::of(
-                    $users->filter(fn(User $user) => $user->getKey() === $deviceToken->user->getKey())->first()?->pivot,
-                    $sections,
-                    $deviceToken->token
-                );
-
-                SendNotification::dispatch($notification, $bulkNotification->channel);
-            });
     }
 }

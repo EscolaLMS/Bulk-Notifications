@@ -14,5 +14,6 @@ Route::prefix('api')
         Route::prefix('admin/bulk-notifications')->group(function () {
             Route::get('/', [BulkNotificationController::class, 'list']);
             Route::post('send', [BulkNotificationController::class, 'send']);
+            Route::post('send/multicast', [BulkNotificationController::class, 'sendMulticast']);
         });
     });

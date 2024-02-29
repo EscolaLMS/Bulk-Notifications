@@ -26,6 +26,14 @@ class DeviceTokenRepository extends BaseRepository implements DeviceTokenReposit
         return $this->model->newQuery()->where('token', $token)->first();
     }
 
+    public function findTokens(): Collection
+    {
+        return $this->model
+            ->newQuery()
+            ->with('user')
+            ->get();
+    }
+
     public function findUsersTokens(Collection $userIds): Collection
     {
         return $this->model
