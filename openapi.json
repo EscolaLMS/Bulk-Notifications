@@ -18,7 +18,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/SendBulkNotificationRequest"
+                                "$ref": "#/components/schemas/SendUserBulkNotificationRequest"
                             }
                         }
                     }
@@ -53,7 +53,55 @@
                 ]
             }
         },
-        "/api/bulk-notifications": {
+        "/api/admin/bulk-notifications/send/multicast": {
+            "post": {
+                "tags": [
+                    "Admin Bulk Notifications"
+                ],
+                "summary": "Store a newly notification",
+                "description": "Store Bulk Notification",
+                "operationId": "749b436c610acc4aa892e792aca1d071",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SendMulticastBulkNotificationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successfull operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/BulkNotificationResource"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/bulk-notifications": {
             "get": {
                 "tags": [
                     "Admin Bulk Notifications"
@@ -166,7 +214,44 @@
                 },
                 "type": "object"
             },
-            "SendBulkNotificationRequest": {
+            "SendMulticastBulkNotificationRequest": {
+                "required": [
+                    "channel",
+                    "sections"
+                ],
+                "properties": {
+                    "channel": {
+                        "description": "channel",
+                        "type": "string"
+                    },
+                    "sections": {
+                        "description": "sections",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "title": {
+                                    "type": "string"
+                                },
+                                "body": {
+                                    "type": "string"
+                                },
+                                "image_url": {
+                                    "type": "string"
+                                },
+                                "redirect_url": {
+                                    "type": "string"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "SendUserBulkNotificationRequest": {
                 "required": [
                     "channel",
                     "sections",
@@ -215,7 +300,8 @@
                 "required": [
                     "id",
                     "channel",
-                    "sections"
+                    "sections",
+                    "users"
                 ],
                 "properties": {
                     "id": {
@@ -230,6 +316,13 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/BulkNotificationSectionResource"
+                        }
+                    },
+                    "users": {
+                        "description": "users",
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
                         }
                     }
                 },
