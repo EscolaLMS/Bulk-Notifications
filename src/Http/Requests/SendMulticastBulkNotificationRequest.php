@@ -14,7 +14,7 @@ use Illuminate\Validation\Rule;
 /**
  * @OA\Schema(
  *      schema="SendMulticastBulkNotificationRequest",
- *      required={"channel", "sections", "user_ids"},
+ *      required={"channel", "sections"},
  *      @OA\Property(
  *          property="channel",
  *          description="channel",

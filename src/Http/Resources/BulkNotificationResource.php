@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @OA\Schema(
  *      schema="BulkNotificationResource",
- *      required={"id", "channel", "sections", "users},
+ *      required={"id", "channel", "sections", "users"},
  *      @OA\Property(
  *          property="id",
  *          description="id",
@@ -23,6 +23,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *           property="sections",
  *           type="array",
  *           @OA\Items(ref="#/components/schemas/BulkNotificationSectionResource")
+ *       ),
+ *       @OA\Property(
+ *           property="users",
+ *           description="users",
+ *           type="array",
+ *           @OA\Items(
+ *               type="integer"
+ *            )
  *       ),
  * )
  *
