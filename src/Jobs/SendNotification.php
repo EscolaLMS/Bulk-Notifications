@@ -45,11 +45,7 @@ class SendNotification implements ShouldQueue
     public function handle(): void
     {
         try {
-            $notificationUser = $this->getNotification()->getBulkNotificationUser();
-
             $this->getChannelInstance()->send($this->getNotification());
-
-            NotificationSent::dispatch($notificationUser->bulkNotification->load('sections'), $notificationUser->user);
         } catch (Exception $exception) {
             Log::error($exception->getMessage());
             throw $exception;

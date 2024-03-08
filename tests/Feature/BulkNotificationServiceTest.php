@@ -13,6 +13,7 @@ use EscolaLms\BulkNotifications\Tests\BulkNotificationTesting;
 use EscolaLms\BulkNotifications\Tests\FakeNotificationChannel;
 use EscolaLms\BulkNotifications\Tests\TestCase;
 use EscolaLms\Core\Models\User;
+use Exception;
 use Illuminate\Support\Facades\Event;
 use Mockery\MockInterface;
 
@@ -39,7 +40,7 @@ class BulkNotificationServiceTest extends TestCase
     {
         $dto = $this->makeSendUserBulkNotificationDto($channel);
         $amount = $dto->getUserIds()->count();
-        $users = User::factory()->count(5)->create()->pluck('user_id')->toArray();
+        $users = User::factory()->count(5)->create()->pluck('id')->toArray();
 
         $this->mock($channel, fn (MockInterface $mock) => $mock->shouldReceive('send')->times($amount));
 
@@ -62,18 +63,18 @@ class BulkNotificationServiceTest extends TestCase
     public function testSendMulticastNotificationViaChannel(string $channel): void
     {
         $dto = $this->makeSendMulticastUserBulkNotificationDto($channel);
-        $notifiedUsersCount = 10;
-        $notifiedUsers = $this->makeUsers($channel, $notifiedUsersCount);
-        $users = User::factory()->count(5)->create()->pluck('user_id')->toArray();
+        $channelUsers = $this->makeUsers($channel, 10);
+        $users = User::factory()->count(5)->create()->pluck('id')->toArray();
+        $notifiedUsersCount = count($channelUsers) + count($users);
+        $notifiedUsers = array_merge($channelUsers, $users);
 
-        $this->mock($channel, fn (MockInterface $mock) => $mock->shouldReceive('send')->times($notifiedUsersCount));
+        $this->mock($channel, fn (MockInterface $mock) => $mock->shouldReceive('send')->times(count($channelUsers)));
 
         $bulkNotification = $this->bulkNotificationService->sendMulticast($dto);
 
         $this->assertBulkNotification($bulkNotification->getKey(), $channel);
         $this->assertBulkNotificationHasSections($dto->getSections()->toArray());
         $this->assertBulkNotificationHasUsers($bulkNotification->getKey(), $notifiedUsers);
-        $this->assertBulkNotificationMissingUsers($bulkNotification->getKey(), $users);
 
         Event::assertDispatchedTimes(NotificationSent::class, $notifiedUsersCount);
         Event::assertDispatched(NotificationSent::class, function (NotificationSent $event) use ($bulkNotification, $notifiedUsers) {

@@ -30,7 +30,7 @@ class SendUserBulkNotificationApiTest extends TestCase
     {
         $user = $this->makeAdmin();
         $payload = $this->makeUserBulkNotificationPayload($channel);
-        $users = User::factory()->count(10)->create()->pluck('user_id')->toArray();
+        $users = User::factory()->count(10)->create()->pluck('id')->toArray();
 
         $response = $this->actingAs($user, 'api')
             ->postJson('api/admin/bulk-notifications/send', $payload)
