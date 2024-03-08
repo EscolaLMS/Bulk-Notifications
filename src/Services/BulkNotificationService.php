@@ -9,13 +9,16 @@ use EscolaLms\BulkNotifications\Dtos\PageDto;
 use EscolaLms\BulkNotifications\Dtos\SendBulkNotificationDto;
 use EscolaLms\BulkNotifications\Dtos\SendUserBulkNotificationDto;
 use EscolaLms\BulkNotifications\Dtos\SendMulticastBulkNotificationDto;
+use EscolaLms\BulkNotifications\Events\NotificationSent;
 use EscolaLms\BulkNotifications\Exceptions\UnsupportedNotification;
 use EscolaLms\BulkNotifications\Jobs\SendNotification;
 use EscolaLms\BulkNotifications\Models\BulkNotification;
+use EscolaLms\BulkNotifications\Models\BulkNotificationUser;
 use EscolaLms\BulkNotifications\Models\DeviceToken;
 use EscolaLms\BulkNotifications\Models\User;
 use EscolaLms\BulkNotifications\Repositories\Contracts\BulkNotificationRepositoryContract;
 use EscolaLms\BulkNotifications\Repositories\Contracts\DeviceTokenRepositoryContract;
+use EscolaLms\BulkNotifications\Repositories\Contracts\UserRepositoryContract;
 use EscolaLms\BulkNotifications\Services\Contracts\BulkNotificationServiceContract;
 use EscolaLms\BulkNotifications\ValueObjects\PushNotification;
 use EscolaLms\BulkNotifications\Dtos\CriteriaBulkNotificationDto;
@@ -28,7 +31,8 @@ class BulkNotificationService implements BulkNotificationServiceContract
 
     public function __construct(
         private BulkNotificationRepositoryContract $bulkNotificationRepository,
-        private DeviceTokenRepositoryContract $deviceTokenRepository
+        private DeviceTokenRepositoryContract $deviceTokenRepository,
+        private UserRepositoryContract $userRepository,
     )
     {
     }
@@ -43,7 +47,7 @@ class BulkNotificationService implements BulkNotificationServiceContract
 
             $recipients = $this->recipients($bulkNotification, $dto->getUserIds());
 
-            $bulkNotification->users()->attach($recipients->pluck('user_id'));
+            $this->createBulkNotificationUsers($bulkNotification, $dto->getUserIds());
 
             $this->process($bulkNotification, $recipients);
 
@@ -61,7 +65,7 @@ class BulkNotificationService implements BulkNotificationServiceContract
 
             $recipients = $this->recipients($bulkNotification);
 
-            $bulkNotification->users()->attach($recipients->pluck('user_id'));
+            $this->createBulkNotificationUsers($bulkNotification);
 
             $this->process($bulkNotification, $recipients);
 
@@ -131,5 +135,22 @@ class BulkNotificationService implements BulkNotificationServiceContract
         }
 
         return $bulkNotification;
+    }
+
+    private function createBulkNotificationUsers(BulkNotification $bulkNotification, ?Collection $userIds = null): void
+    {
+        if (!$userIds) {
+            $userIds = $this->userRepository->findAllIds();
+        }
+
+        $bulkNotification->users()->attach($userIds);
+
+        $this->dispatchNotificationEvents($bulkNotification, $bulkNotification->users);
+    }
+
+    private function dispatchNotificationEvents(BulkNotification $bulkNotification, Collection $users): void
+    {
+        $bulkNotification->load('sections')->unsetRelation('users');
+        $users->each(fn(User $user) => NotificationSent::dispatch($bulkNotification, $user));
     }
 }

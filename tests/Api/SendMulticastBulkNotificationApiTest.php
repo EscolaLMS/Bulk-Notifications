@@ -30,8 +30,8 @@ class SendMulticastBulkNotificationApiTest extends TestCase
     {
         $user = $this->makeAdmin();
         $payload = $this->makeMulticastBulkNotificationPayload($channel);
-        $notifiedUsers = $this->makeUsers($channel, 5);
-        $users = User::factory()->count(10)->create()->pluck('user_id')->toArray();
+        $channelUsers = $this->makeUsers($channel, 5);
+        $users = User::factory()->count(10)->create()->pluck('id')->toArray();
 
         $response = $this->actingAs($user, 'api')
             ->postJson('api/admin/bulk-notifications/send/multicast', $payload)
@@ -41,8 +41,7 @@ class SendMulticastBulkNotificationApiTest extends TestCase
 
         $this->assertBulkNotification($bulkNotificationId, $channel);
         $this->assertBulkNotificationHasSections($payload['sections']);
-        $this->assertBulkNotificationHasUsers($bulkNotificationId, $notifiedUsers);
-        $this->assertBulkNotificationMissingUsers($bulkNotificationId, $users);
+        $this->assertBulkNotificationHasUsers($bulkNotificationId, array_merge([$user->getKey()], $users, $channelUsers));
 
         Queue::assertPushed(SendNotification::class);
     }

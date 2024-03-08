@@ -6,8 +6,10 @@ use EscolaLms\Auth\EscolaLmsAuthServiceProvider;
 use EscolaLms\BulkNotifications\Providers\SettingsServiceProvider;
 use EscolaLms\BulkNotifications\Repositories\BulkNotificationRepository;
 use EscolaLms\BulkNotifications\Repositories\Contracts\BulkNotificationRepositoryContract;
+use EscolaLms\BulkNotifications\Repositories\Contracts\UserRepositoryContract;
 use EscolaLms\BulkNotifications\Repositories\DeviceTokenRepository;
 use EscolaLms\BulkNotifications\Repositories\Contracts\DeviceTokenRepositoryContract;
+use EscolaLms\BulkNotifications\Repositories\UserRepository;
 use EscolaLms\BulkNotifications\Services\BulkNotificationService;
 use EscolaLms\BulkNotifications\Services\Contracts\BulkNotificationServiceContract;
 use EscolaLms\BulkNotifications\Services\Contracts\DeviceTokenServiceContract;
@@ -25,6 +27,7 @@ class EscolaLmsBulkNotificationsServiceProvider extends ServiceProvider
     public const REPOSITORIES = [
         DeviceTokenRepositoryContract::class => DeviceTokenRepository::class,
         BulkNotificationRepositoryContract::class => BulkNotificationRepository::class,
+        UserRepositoryContract::class => UserRepository::class,
     ];
 
     public const SERVICES = [
