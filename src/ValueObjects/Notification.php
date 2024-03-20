@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 abstract class Notification
 {
 
-    public function __construct(protected BulkNotificationUser $bulkNotificationUser)
+    public function __construct(protected BulkNotificationUser $bulkNotificationUser, protected int $identifier)
     {
     }
 
@@ -17,7 +17,12 @@ abstract class Notification
         return $this->bulkNotificationUser;
     }
 
-    abstract public static function of(BulkNotificationUser $bulkNotificationUser, Collection $sections, string $destination): Notification;
+    public function getIdentifier(): int
+    {
+        return $this->identifier;
+    }
+
+    abstract public static function of(BulkNotificationUser $bulkNotificationUser, int $identifier, Collection $sections, string $destination): Notification;
 
     abstract public function toPayload();
 }

@@ -10,6 +10,7 @@ class PushNotification extends Notification
 {
     public function __construct(
         protected BulkNotificationUser $bulkNotificationUser,
+        protected int $identifier,
         protected string $deviceToken,
         protected string $title,
         protected string $body,
@@ -18,10 +19,10 @@ class PushNotification extends Notification
         protected ?array $data = []
     )
     {
-        parent::__construct($bulkNotificationUser);
+        parent::__construct($bulkNotificationUser, $identifier);
     }
 
-    public static function of(BulkNotificationUser $bulkNotificationUser, Collection $sections, string $destination): PushNotification
+    public static function of(BulkNotificationUser $bulkNotificationUser, int $identifier, Collection $sections, string $destination): PushNotification
     {
         $sections = $sections->mapWithKeys(fn(BulkNotificationSection $section) => [
             $section->key => $section->value
@@ -35,6 +36,7 @@ class PushNotification extends Notification
 
         return new self(
             $bulkNotificationUser,
+            $identifier,
             $destination,
             $title,
             $body,
@@ -83,7 +85,7 @@ class PushNotification extends Notification
                 'body' => $this->getBody(),
                 'image' => $this->getImageUrl(),
             ],
-            'data' => array_merge($this->getData(), ['redirect_url' => $this->getRedirectUrl()])
+            'data' => array_merge($this->getData(), ['redirect_url' => $this->getRedirectUrl(), 'id' => $this->getIdentifier()])
         ];
     }
 }
