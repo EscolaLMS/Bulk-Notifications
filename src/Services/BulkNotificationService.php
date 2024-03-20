@@ -104,14 +104,15 @@ class BulkNotificationService implements BulkNotificationServiceContract
 
     private function processPushNotifications(BulkNotification $bulkNotification, Collection $recipients): void
     {
+        $identifier = $bulkNotification->getKey();
         $channel = $bulkNotification->channel;
         $users = $bulkNotification->users;
         $sections = $bulkNotification->sections;
-
         $recipients
-            ->each(function (DeviceToken $deviceToken) use ($channel, $users, $sections, $recipients) {
+            ->each(function (DeviceToken $deviceToken) use ($identifier, $channel, $users, $sections, $recipients) {
                 $notification = PushNotification::of(
                     $users->filter(fn(User $user) => $user->getKey() === $deviceToken->user->getKey())->first()?->pivot,
+                    $identifier,
                     $sections,
                     $deviceToken->token
                 );
