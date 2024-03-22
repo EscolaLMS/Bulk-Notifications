@@ -108,6 +108,7 @@ class BulkNotificationService implements BulkNotificationServiceContract
         $channel = $bulkNotification->channel;
         $users = $bulkNotification->users;
         $sections = $bulkNotification->sections;
+
         $recipients
             ->each(function (DeviceToken $deviceToken) use ($identifier, $channel, $users, $sections, $recipients) {
                 $notification = PushNotification::of(

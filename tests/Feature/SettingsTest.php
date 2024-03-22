@@ -8,11 +8,12 @@ use EscolaLms\BulkNotifications\Tests\TestCase;
 use EscolaLms\Core\Tests\CreatesUsers;
 use EscolaLms\Settings\Database\Seeders\PermissionTableSeeder;
 use EscolaLms\Settings\EscolaLmsSettingsServiceProvider;
+use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Config;
 
 class SettingsTest extends TestCase
 {
-    use CreatesUsers;
+    use CreatesUsers, WithFaker;
 
     protected function setUp(): void
     {
@@ -46,6 +47,7 @@ class SettingsTest extends TestCase
             "client_x509_cert_url" => "https://client_x509_cert_url",
             "universe_domain" => "universe_domain.com",
         ]);
+        $pushBaseRedirectUrl = $this->faker->url;
 
         $this->actingAs($user, 'api')
             ->postJson('/api/admin/config',
@@ -54,6 +56,10 @@ class SettingsTest extends TestCase
                         [
                             'key' => "{$configKey}.push.service_account",
                             'value' => $pushServiceAccount,
+                        ],
+                        [
+                            'key' => "{$configKey}.push.base_redirect_url",
+                            'value' => $pushBaseRedirectUrl,
                         ],
                     ]
                 ]
@@ -75,6 +81,16 @@ class SettingsTest extends TestCase
                             'value' => $pushServiceAccount,
                             'readonly' => false,
                         ],
+                        'base_redirect_url' => [
+                            'full_key' => "$configKey.push.base_redirect_url",
+                            'key' => 'push.base_redirect_url',
+                            'public' => false,
+                            'rules' => [
+                                'string'
+                            ],
+                            'value' => $pushBaseRedirectUrl,
+                            'readonly' => false,
+                        ]
                     ],
                 ],
             ]);
@@ -83,6 +99,7 @@ class SettingsTest extends TestCase
             ->assertOk()
             ->assertJsonMissing([
                 'push.service_account' => $pushServiceAccount,
+                'push.base_redirect_url' => $pushBaseRedirectUrl,
                 'enable' => true
             ]);
     }

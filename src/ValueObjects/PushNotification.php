@@ -2,6 +2,7 @@
 
 namespace EscolaLms\BulkNotifications\ValueObjects;
 
+use EscolaLms\BulkNotifications\EscolaLmsBulkNotificationsServiceProvider;
 use EscolaLms\BulkNotifications\Models\BulkNotificationSection;
 use EscolaLms\BulkNotifications\Models\BulkNotificationUser;
 use Illuminate\Support\Collection;
@@ -71,6 +72,15 @@ class PushNotification extends Notification
         return $this->redirectUrl;
     }
 
+    public function getRedirectUrlWithBasicUrl(): ?string
+    {
+        $url = config(EscolaLmsBulkNotificationsServiceProvider::CONFIG_KEY . '.push.base_redirect_url');
+
+        return isset($url)
+            ? rtrim($url, '/') . '/' . ltrim($this->redirectUrl, '/')
+            : $this->redirectUrl;
+    }
+
     public function getData(): ?array
     {
         return $this->data;
@@ -85,7 +95,10 @@ class PushNotification extends Notification
                 'body' => $this->getBody(),
                 'image' => $this->getImageUrl(),
             ],
-            'data' => array_merge($this->getData(), ['redirect_url' => $this->getRedirectUrl(), 'id' => $this->getIdentifier()])
+            'data' => array_merge($this->getData(), [
+                'redirect_url' =>  $this->getRedirectUrlWithBasicUrl(),
+                'id' => $this->getIdentifier()
+            ])
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 return [
     'push' => [
-        'service_account' => []
+        'service_account' => [],
+        'base_redirect_url' => null
     ]
 ];
