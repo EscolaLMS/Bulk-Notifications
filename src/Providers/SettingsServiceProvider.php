@@ -17,6 +17,7 @@ class SettingsServiceProvider extends ServiceProvider
             }
 
             AdministrableConfig::registerConfig(EscolaLmsBulkNotificationsServiceProvider::CONFIG_KEY . '.push.service_account', ['json'], false);
+            AdministrableConfig::registerConfig(EscolaLmsBulkNotificationsServiceProvider::CONFIG_KEY . '.push.base_redirect_url', ['string'], false);
         }
     }
 }
