@@ -2,14 +2,26 @@ name: Generate Swagger Documentation
 
 on:
   push:
-    branches:
-      - main
+#    branches:
+#      - main
 
 jobs:
   swagger-gh-pages:
     runs-on: ubuntu-latest
     container:
       image: escolalms/php:8.2
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: database
+          MYSQL_PASSWORD: password
+          MYSQL_USER: username
+        ports:
+          - 33306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Instantiate package
@@ -23,6 +35,9 @@ jobs:
 
       - name: Update composer
         run: composer update
+
+      - name: Publish things
+        run: vendor/bin/testbench migrate:fresh
 
       - name: Require composer swagger package
         run: composer require darkaonline/l5-swagger:8.1.0
